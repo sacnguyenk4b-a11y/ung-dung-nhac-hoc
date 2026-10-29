@@ -180,6 +180,15 @@ label input[type="checkbox"] {
 </div>
 
 <div class="card">
+    <div class="card">
+    <h2>📘 Tin học lớp 3 – Kết nối tri thức</h2>
+
+    <select id="chonBaiTinHoc" onchange="moBaiTinHoc()">
+        <option value="">-- Chọn bài học --</option>
+    </select>
+
+    <div id="noiDungBaiTinHoc"></div>
+</div>
     <h2>➕ Thêm bài học</h2>
 
     <input id="tenBai" type="text"
@@ -686,6 +695,65 @@ hienThi();
 khoiPhucTrangThaiNhac();
 
 setInterval(kiemTraGioNhac, 1000);
+
+const danhSachBaiTinHoc = [
+    "Bài 1. Thông tin và quyết định",
+    "Bài 2. Xử lí thông tin",
+    "Bài 3. Máy tính và em",
+    "Bài 4. Làm việc với máy tính",
+    "Bài 5. Sử dụng bàn phím",
+    "Bài 6. Khám phá thông tin trên Internet",
+    "Bài 7. Sắp xếp để dễ tìm",
+    "Bài 8. Sơ đồ hình cây. Tổ chức thông tin trong máy tính",
+    "Bài 9. Thực hành với tệp và thư mục trong máy tính",
+    "Bài 10. Bảo vệ thông tin khi dùng máy tính",
+    "Bài 11. Bài trình chiếu của em",
+    "Bài 12. Tìm hiểu về thế giới tự nhiên",
+    "Bài 13. Luyện tập sử dụng chuột",
+    "Bài 14. Em thực hiện công việc như thế nào",
+    "Bài 15. Công việc được thực hiện theo điều kiện",
+    "Bài 16. Công việc của em và sự trợ giúp của máy tính"
+];
+
+function khoiTaoDanhSachTinHoc() {
+    const chon = document.getElementById("chonBaiTinHoc");
+
+    if (!chon || chon.options.length > 1) return;
+
+    danhSachBaiTinHoc.forEach((ten, index) => {
+        const option = document.createElement("option");
+        option.value = index;
+        option.textContent = ten;
+        chon.appendChild(option);
+    });
+}
+
+function moBaiTinHoc() {
+    const chon = document.getElementById("chonBaiTinHoc");
+    const noiDung = document.getElementById("noiDungBaiTinHoc");
+
+    if (!chon || !noiDung) return;
+
+    if (chon.value === "") {
+        noiDung.textContent = "";
+        return;
+    }
+
+    const ten = danhSachBaiTinHoc[Number(chon.value)];
+
+    noiDung.replaceChildren();
+
+    const tieuDe = document.createElement("h3");
+    tieuDe.textContent = ten;
+
+    const thongBao = document.createElement("p");
+    thongBao.textContent =
+        "Danh sách bài đã được tạo. Nội dung kiến thức và câu hỏi sẽ được bổ sung ở bước tiếp theo.";
+
+    noiDung.append(tieuDe, thongBao);
+}
+
+khoiTaoDanhSachTinHoc();
 
 </script>
 </body>
