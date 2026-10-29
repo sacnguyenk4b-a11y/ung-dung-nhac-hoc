@@ -1,0 +1,692 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ứng dụng nhắc học</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f0f5ff;
+    color: #263238;
+    margin: 0;
+    padding: 16px;
+}
+
+.container {
+    max-width: 700px;
+    margin: auto;
+}
+
+h1 {
+    text-align: center;
+    color: #2457a7;
+}
+
+h2 {
+    color: #2457a7;
+    font-size: 20px;
+}
+
+.card {
+    background: white;
+    padding: 18px;
+    margin: 16px 0;
+    border-radius: 14px;
+    box-shadow: 0 3px 10px #00000010;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px;
+    margin: 7px 0;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+button {
+    padding: 10px 12px;
+    margin: 4px 2px;
+    border: none;
+    border-radius: 8px;
+    background: #3478db;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: 0.85;
+}
+
+.green {
+    background: #159447;
+}
+
+.orange {
+    background: #e99b18;
+}
+
+.red {
+    background: #d94343;
+}
+
+.gray {
+    background: #64748b;
+}
+
+.lesson {
+    border: 1px solid #dce5f3;
+    border-radius: 10px;
+    padding: 13px;
+    margin: 10px 0;
+    background: #fbfdff;
+}
+
+.lesson.due {
+    border-left: 5px solid #e99b18;
+}
+
+.lesson-title {
+    font-size: 17px;
+    font-weight: bold;
+    overflow-wrap: anywhere;
+}
+
+.small {
+    color: #64748b;
+    font-size: 13px;
+    line-height: 1.7;
+    margin-top: 6px;
+}
+
+.actions {
+    margin-top: 8px;
+}
+
+.status {
+    background: #e8f2ff;
+    border-radius: 8px;
+    padding: 10px;
+    line-height: 1.6;
+}
+
+label {
+    display: block;
+    margin: 10px 0;
+}
+
+label input[type="checkbox"] {
+    width: auto;
+    margin-right: 8px;
+}
+
+#nutTatChuong {
+    display: none;
+    width: 100%;
+    padding: 16px;
+    font-size: 18px;
+    background: #d92323;
+}
+
+.empty {
+    color: #64748b;
+    text-align: center;
+    padding: 15px;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<h1>📚 Góc học tập của tôi</h1>
+
+<div class="card">
+    <h2>⏰ Nhắc học hằng ngày</h2>
+
+    <label>
+        Giờ nhắc học:
+        <input type="time" id="gioNhac" value="19:00">
+    </label>
+
+    <label>
+        <input type="checkbox" id="nhacHangNgay">
+        Bật nhắc học hằng ngày
+    </label>
+
+    <button onclick="datGioNhac()">Lưu giờ nhắc</button>
+    <button class="gray" onclick="thuChuong()">Thử chuông</button>
+    <button id="nutTatChuong" onclick="tatChuong()">
+        🔕 Tắt chuông
+    </button>
+
+    <p id="trangThaiNhac" class="status">
+        Bạn chưa đặt giờ nhắc học.
+    </p>
+
+    <p class="small">
+        Lưu ý: Chuông trên phiên bản HTML này cần trang ứng dụng
+        đang mở và trình duyệt hoạt động. Không bảo đảm báo thức
+        khi đóng trang hoặc tắt máy.
+    </p>
+</div>
+
+<div class="card">
+    <h2>➕ Thêm bài học</h2>
+
+    <input id="tenBai" type="text"
+           placeholder="Nhập tên bài học cần ôn tập">
+
+    <button id="nutLuuBai" onclick="themHoacCapNhat()">
+        Thêm bài học
+    </button>
+
+    <button id="nutHuySua" class="gray"
+            onclick="huySua()" style="display:none">
+        Hủy sửa
+    </button>
+</div>
+
+<div class="card">
+    <h2>🔎 Tìm kiếm và lọc bài học</h2>
+
+    <input id="timKiem" type="text"
+           placeholder="Nhập tên bài học để tìm..."
+           oninput="hienThi()">
+
+    <select id="boLoc" onchange="hienThi()">
+        <option value="tatca">Tất cả bài học</option>
+        <option value="denhan">Bài cần ôn hôm nay</option>
+        <option value="chuaden">Bài chưa đến hạn</option>
+    </select>
+
+    <p id="thongKe" class="status"></p>
+</div>
+
+<div class="card">
+    <h2>📝 Bài học của tôi</h2>
+    <div id="danhSach"></div>
+</div>
+
+</div>
+
+<script>
+// ===============================
+// 1. DỮ LIỆU VÀ LƯU TRỮ
+// ===============================
+
+const KHOA_BAI_HOC = "baiHoc";
+const KHOA_GIO_NHAC = "gioNhac";
+const KHOA_BAT_NHAC = "nhacHangNgay";
+const KHOA_DA_BAO = "daBaoGio";
+
+let baiHoc = [];
+let dangSua = null;
+let boDemChuong = null;
+let audioContext = null;
+
+function docDuLieu() {
+    try {
+        const duLieu = JSON.parse(
+            localStorage.getItem(KHOA_BAI_HOC) || "[]"
+        );
+
+        baiHoc = Array.isArray(duLieu)
+            ? duLieu.map(b => ({
+                ten: String(b.ten || ""),
+                lanOn: Math.max(0, Number(b.lanOn) || 0),
+                ngayOnTiep: b.ngayOnTiep || ngayHomNay(),
+                ngayOnCuoi: b.ngayOnCuoi || "",
+                id: b.id || taoId()
+            }))
+            : [];
+    } catch (e) {
+        baiHoc = [];
+    }
+}
+
+function luuBaiHoc() {
+    localStorage.setItem(KHOA_BAI_HOC, JSON.stringify(baiHoc));
+}
+
+function taoId() {
+    return Date.now().toString(36) +
+        Math.random().toString(36).slice(2, 8);
+}
+
+// ===============================
+// 2. XỬ LÝ NGÀY THÁNG
+// ===============================
+
+function ngayHomNay() {
+    const d = new Date();
+
+    return d.getFullYear() + "-" +
+        String(d.getMonth() + 1).padStart(2, "0") + "-" +
+        String(d.getDate()).padStart(2, "0");
+}
+
+function congNgay(soNgay) {
+    const d = new Date();
+    d.setHours(12, 0, 0, 0);
+    d.setDate(d.getDate() + soNgay);
+
+    return d.getFullYear() + "-" +
+        String(d.getMonth() + 1).padStart(2, "0") + "-" +
+        String(d.getDate()).padStart(2, "0");
+}
+
+function dinhDangNgay(ngay) {
+    if (!ngay) return "Chưa có";
+
+    const p = ngay.split("-");
+    if (p.length !== 3) return ngay;
+
+    return p[2] + "/" + p[1] + "/" + p[0];
+}
+
+function daDenHan(b) {
+    return (b.ngayOnTiep || ngayHomNay()) <= ngayHomNay();
+}
+
+// ===============================
+// 3. THÊM VÀ SỬA BÀI HỌC
+// ===============================
+
+function themHoacCapNhat() {
+    const oNhap = document.getElementById("tenBai");
+    const ten = oNhap.value.trim();
+
+    if (!ten) {
+        alert("Bạn hãy nhập tên bài học!");
+        oNhap.focus();
+        return;
+    }
+
+    if (dangSua !== null) {
+        const b = baiHoc.find(x => x.id === dangSua);
+
+        if (b) b.ten = ten;
+
+        dangSua = null;
+        document.getElementById("nutLuuBai").textContent =
+            "Thêm bài học";
+        document.getElementById("nutHuySua").style.display =
+            "none";
+    } else {
+        baiHoc.push({
+            id: taoId(),
+            ten: ten,
+            lanOn: 0,
+            ngayOnTiep: ngayHomNay(),
+            ngayOnCuoi: ""
+        });
+    }
+
+    oNhap.value = "";
+    luuBaiHoc();
+    hienThi();
+}
+
+function suaBai(id) {
+    const b = baiHoc.find(x => x.id === id);
+    if (!b) return;
+
+    dangSua = id;
+    document.getElementById("tenBai").value = b.ten;
+    document.getElementById("nutLuuBai").textContent =
+        "Lưu thay đổi";
+    document.getElementById("nutHuySua").style.display =
+        "inline-block";
+
+    document.getElementById("tenBai").focus();
+}
+
+function huySua() {
+    dangSua = null;
+    document.getElementById("tenBai").value = "";
+    document.getElementById("nutLuuBai").textContent =
+        "Thêm bài học";
+    document.getElementById("nutHuySua").style.display =
+        "none";
+}
+
+// ===============================
+// 4. XÓA BÀI HỌC
+// ===============================
+
+function xoaBai(id) {
+    const b = baiHoc.find(x => x.id === id);
+    if (!b) return;
+
+    if (!confirm('Bạn có chắc muốn xóa bài "' + b.ten + '"?')) {
+        return;
+    }
+
+    baiHoc = baiHoc.filter(x => x.id !== id);
+
+    if (dangSua === id) huySua();
+
+    luuBaiHoc();
+    hienThi();
+}
+
+// ===============================
+// 5. ÔN TẬP CÁCH QUÃNG
+// ===============================
+
+const mocOnTap = [1, 3, 7, 14, 30];
+
+function onTap(id, ketQua) {
+    const b = baiHoc.find(x => x.id === id);
+    if (!b) return;
+
+    let soNgay;
+
+    if (ketQua === "quen") {
+        // Quên: ôn lại vào ngày mai
+        b.lanOn = 0;
+        soNgay = 1;
+    } else if (ketQua === "kho") {
+        // Khó nhớ: ôn lại sau 3 ngày
+        soNgay = 3;
+    } else {
+        // Nhớ tốt: tăng mức ôn tập
+        b.lanOn = Math.min(
+            b.lanOn + 1,
+            mocOnTap.length - 1
+        );
+        soNgay = mocOnTap[b.lanOn];
+    }
+
+    b.ngayOnCuoi = ngayHomNay();
+    b.ngayOnTiep = congNgay(soNgay);
+
+    luuBaiHoc();
+    hienThi();
+}
+
+// ===============================
+// 6. HIỂN THỊ DANH SÁCH
+// ===============================
+
+function taoNut(text, className, action) {
+    const button = document.createElement("button");
+    button.textContent = text;
+    button.className = className || "";
+    button.addEventListener("click", action);
+    return button;
+}
+
+function hienThi() {
+    const noiDung = document.getElementById("danhSach");
+    const tuKhoa = document.getElementById("timKiem")
+        .value.trim().toLowerCase();
+    const boLoc = document.getElementById("boLoc").value;
+
+    const denHan = baiHoc.filter(daDenHan).length;
+
+    document.getElementById("thongKe").textContent =
+        "Tổng số bài: " + baiHoc.length +
+        " | Đến hạn ôn: " + denHan;
+
+    let danhSach = baiHoc.filter(b => {
+        const khopTen = b.ten.toLowerCase().includes(tuKhoa);
+
+        if (boLoc === "denhan") {
+            return khopTen && daDenHan(b);
+        }
+
+        if (boLoc === "chuaden") {
+            return khopTen && !daDenHan(b);
+        }
+
+        return khopTen;
+    });
+
+    // Đưa bài đến hạn lên đầu danh sách
+    danhSach.sort((a, b) => {
+        if (daDenHan(a) !== daDenHan(b)) {
+            return daDenHan(a) ? -1 : 1;
+        }
+
+        return a.ngayOnTiep.localeCompare(b.ngayOnTiep);
+    });
+
+    noiDung.replaceChildren();
+
+    if (danhSach.length === 0) {
+        const p = document.createElement("p");
+        p.className = "empty";
+        p.textContent = baiHoc.length === 0
+            ? "Bạn chưa có bài học nào. Hãy thêm bài học nhé!"
+            : "Không tìm thấy bài học phù hợp.";
+        noiDung.appendChild(p);
+        return;
+    }
+
+    danhSach.forEach(b => {
+        const khung = document.createElement("div");
+        khung.className = "lesson" +
+            (daDenHan(b) ? " due" : "");
+
+        const ten = document.createElement("div");
+        ten.className = "lesson-title";
+        ten.textContent = b.ten;
+        khung.appendChild(ten);
+
+        const thongTin = document.createElement("div");
+        thongTin.className = "small";
+        thongTin.textContent =
+            (daDenHan(b) ? "📌 Đã đến hạn ôn tập" :
+                "🗓️ Chưa đến hạn ôn tập") +
+            " | Mức ôn: " + (b.lanOn + 1) +
+            " | Ôn tiếp: " + dinhDangNgay(b.ngayOnTiep) +
+            " | Ôn gần nhất: " +
+            dinhDangNgay(b.ngayOnCuoi);
+
+        khung.appendChild(thongTin);
+
+        const nut = document.createElement("div");
+        nut.className = "actions";
+
+        nut.appendChild(taoNut("Quên", "red",
+            () => onTap(b.id, "quen")));
+
+        nut.appendChild(taoNut("Khó nhớ", "orange",
+            () => onTap(b.id, "kho")));
+
+        nut.appendChild(taoNut("Nhớ tốt", "green",
+            () => onTap(b.id, "tot")));
+
+        nut.appendChild(taoNut("Sửa", "gray",
+            () => suaBai(b.id)));
+
+        nut.appendChild(taoNut("Xóa", "red",
+            () => xoaBai(b.id)));
+
+        khung.appendChild(nut);
+        noiDung.appendChild(khung);
+    });
+}
+
+// ===============================
+// 7. CÀI ĐẶT GIỜ NHẮC
+// ===============================
+
+function datGioNhac() {
+    const gio = document.getElementById("gioNhac").value;
+
+    if (!gio) {
+        alert("Bạn hãy chọn giờ nhắc học!");
+        return;
+    }
+
+    localStorage.setItem(KHOA_GIO_NHAC, gio);
+
+    const bat = document.getElementById("nhacHangNgay").checked;
+    localStorage.setItem(KHOA_BAT_NHAC, bat ? "1" : "0");
+
+    capNhatTrangThaiNhac();
+
+    alert("Đã lưu cài đặt nhắc học!");
+}
+
+function capNhatTrangThaiNhac() {
+    const gio = document.getElementById("gioNhac").value;
+    const bat = document.getElementById("nhacHangNgay").checked;
+
+    const trangThai = document.getElementById("trangThaiNhac");
+
+    if (bat && gio) {
+        trangThai.textContent =
+            "🔔 Đã bật nhắc học hằng ngày lúc " + gio +
+            ". Hãy giữ trang ứng dụng mở để chuông hoạt động.";
+    } else {
+        trangThai.textContent =
+            "🔕 Nhắc học đang tắt. Bạn có thể bật lại bất cứ lúc nào.";
+    }
+}
+
+function khoiPhucTrangThaiNhac() {
+    const gio = localStorage.getItem(KHOA_GIO_NHAC);
+    const bat = localStorage.getItem(KHOA_BAT_NHAC);
+
+    if (gio) {
+        document.getElementById("gioNhac").value = gio;
+    }
+
+    document.getElementById("nhacHangNgay").checked =
+        bat === "1";
+
+    capNhatTrangThaiNhac();
+}
+
+document.getElementById("nhacHangNgay")
+    .addEventListener("change", function() {
+        localStorage.setItem(
+            KHOA_BAT_NHAC,
+            this.checked ? "1" : "0"
+        );
+        capNhatTrangThaiNhac();
+    });
+
+// ===============================
+// 8. CHUÔNG BÁO
+// ===============================
+
+async function taoAudio() {
+    const AudioContextClass =
+        window.AudioContext || window.webkitAudioContext;
+
+    if (!AudioContextClass) {
+        alert("Trình duyệt này không hỗ trợ phát chuông.");
+        return null;
+    }
+
+    if (!audioContext) {
+        audioContext = new AudioContextClass();
+    }
+
+    if (audioContext.state === "suspended") {
+        await audioContext.resume();
+    }
+
+    return audioContext;
+}
+
+async function batChuong() {
+    tatChuong();
+
+    const ctx = await taoAudio();
+    if (!ctx) return;
+
+    const oscillator = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    oscillator.type = "sine";
+    oscillator.frequency.value = 880;
+    gain.gain.value = 0.12;
+
+    oscillator.connect(gain);
+    gain.connect(ctx.destination);
+
+    oscillator.start();
+
+    boDemChuong = oscillator;
+
+    document.getElementById("nutTatChuong").style.display =
+        "block";
+}
+
+function tatChuong() {
+    if (boDemChuong) {
+        try {
+            boDemChuong.stop();
+        } catch (e) {}
+
+        try {
+            boDemChuong.disconnect();
+        } catch (e) {}
+
+        boDemChuong = null;
+    }
+
+    document.getElementById("nutTatChuong").style.display =
+        "none";
+}
+
+function thuChuong() {
+    batChuong();
+}
+
+// ===============================
+// 9. KIỂM TRA GIỜ HẰNG NGÀY
+// ===============================
+
+function kiemTraGioNhac() {
+    const bat = document.getElementById("nhacHangNgay").checked;
+    const gio = document.getElementById("gioNhac").value;
+
+    if (!bat || !gio) return;
+
+    const now = new Date();
+    const gioHienTai =
+        String(now.getHours()).padStart(2, "0") + ":" +
+        String(now.getMinutes()).padStart(2, "0");
+
+    if (gioHienTai !== gio) return;
+
+    const homNay = ngayHomNay();
+    const daBao = localStorage.getItem(KHOA_DA_BAO);
+
+    if (daBao === homNay) return;
+
+    localStorage.setItem(KHOA_DA_BAO, homNay);
+
+    capNhatTrangThaiNhac();
+
+    batChuong();
+}
+
+// ===============================
+// 10. KHỞI ĐỘNG ỨNG DỤNG
+// ===============================
+
+docDuLieu();
+hienThi();
+khoiPhucTrangThaiNhac();
+
+setInterval(kiemTraGioNhac, 1000);
+
+</script>
+</body>
+</html>
