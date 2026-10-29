@@ -770,82 +770,190 @@ function moBaiTinHoc() {
     noiDung.replaceChildren();
     if (chon.value === "") return;
 
+    const viTri = Number(chon.value);
     const tieuDe = document.createElement("h3");
-    tieuDe.textContent = danhSachBaiTinHoc[Number(chon.value)];
+    tieuDe.textContent = danhSachBaiTinHoc[viTri];
     noiDung.appendChild(tieuDe);
 
-    if (Number(chon.value) !== 0) {
-        const p = document.createElement("p");
-        p.textContent = "Nội dung kiến thức và câu hỏi của bài này sẽ được bổ sung sau.";
-        noiDung.appendChild(p);
+    if (viTri === 0) {
+        const tieuDeKT = document.createElement("h4");
+        tieuDeKT.textContent = "📖 Kiến thức cần nhớ";
+        noiDung.appendChild(tieuDeKT);
+
+        noiDungBai1.kienThuc.forEach(kienThuc => {
+            const p = document.createElement("p");
+            p.textContent = "• " + kienThuc;
+            noiDung.appendChild(p);
+        });
+
+        const tieuDeQuiz = document.createElement("h4");
+        tieuDeQuiz.textContent = "✍️ Câu hỏi trắc nghiệm";
+        noiDung.appendChild(tieuDeQuiz);
+
+        const form = document.createElement("div");
+        noiDungBai1.cauHoi.forEach((cau, i) => {
+            const nhom = document.createElement("div");
+            nhom.style.cssText = "margin:14px 0;padding:10px;background:#f8fbff;border-radius:8px";
+            const p = document.createElement("p");
+            p.textContent = cau.hoi;
+            nhom.appendChild(p);
+            cau.dapAn.forEach((dapAn, j) => {
+                const label = document.createElement("label");
+                label.style.display = "block";
+                const radio = document.createElement("input");
+                radio.type = "radio";
+                radio.name = "bai1_cau" + i;
+                radio.value = j;
+                radio.style.width = "auto";
+                label.append(radio, document.createTextNode(" " + dapAn));
+                nhom.appendChild(label);
+            });
+            form.appendChild(nhom);
+        });
+
+        const nut = document.createElement("button");
+        nut.textContent = "Chấm điểm";
+        nut.onclick = function() {
+            let diem = 0;
+            let daLam = 0;
+            noiDungBai1.cauHoi.forEach((cau, i) => {
+                const dapAnChon = form.querySelector('input[name="bai1_cau' + i + '"]:checked');
+                if (dapAnChon) {
+                    daLam++;
+                    if (Number(dapAnChon.value) === cau.dung) diem++;
+                }
+            });
+            if (daLam < noiDungBai1.cauHoi.length) {
+                alert("Bạn hãy trả lời đủ 5 câu nhé!");
+                return;
+            }
+            alert("Bạn được " + diem + "/5 điểm!");
+        };
+        form.appendChild(nut);
+        noiDung.appendChild(form);
         return;
     }
 
-    const tieuDeKT = document.createElement("h4");
-    tieuDeKT.textContent = "📖 Kiến thức cần nhớ";
-    noiDung.appendChild(tieuDeKT);
+    if (viTri === 1) {
+        noiDung.insertAdjacentHTML("beforeend", `
+        <div style="padding:12px;background:#f2f7ff;border-radius:10px;margin:12px 0">
+          <h4>📖 Kiến thức cần nhớ</h4>
+          <p>• Con người thu nhận thông tin từ thế giới xung quanh qua các giác quan.</p>
+          <p>• Bộ não xử lí thông tin để đưa ra quyết định và điều khiển hành động.</p>
+        </div>
+        <div style="margin:12px 0;padding:12px;border:1px solid #dce5f3;border-radius:10px">
+          <h4>1. Trắc nghiệm</h4>
+          <p><b>Câu 1.</b> Bộ phận nào của cơ thể người thực hiện xử lí thông tin, đưa ra quyết định và điều khiển suy nghĩ, hành động?</p>
+          <label><input type="radio" name="b2q1" value="A" style="width:auto"> A. Mắt</label>
+          <label><input type="radio" name="b2q1" value="B" style="width:auto"> B. Bộ não</label>
+          <label><input type="radio" name="b2q1" value="C" style="width:auto"> C. Tai</label>
+          <label><input type="radio" name="b2q1" value="D" style="width:auto"> D. Bàn tay</label>
+        </div>
+        <div style="margin:12px 0;padding:12px;border:1px solid #dce5f3;border-radius:10px">
+          <h4>2. Điền từ vào chỗ trống</h4>
+          <p class="small">Từ cho sẵn: thông tin – bộ não – quyết định.</p>
+          <p>Con người thu nhận <input id="b2blank1" type="text" placeholder="(1) ..." style="width:100%"> từ thế giới xung quanh qua các giác quan. Sau đó, <input id="b2blank2" type="text" placeholder="(2) ..." style="width:100%"> sẽ thực hiện xử lí để đưa ra <input id="b2blank3" type="text" placeholder="(3) ..." style="width:100%"> và điều khiển hành động.</p>
+        </div>
+        <div style="margin:12px 0;padding:12px;border:1px solid #dce5f3;border-radius:10px">
+          <h4>3. Nối ý</h4>
+          <p class="small">Chọn nội dung phù hợp với từng bước.</p>
+          <p>1. Mắt nhìn thấy đèn giao thông chuyển sang màu đỏ</p>
+          <select id="b2m1"><option value="">-- Chọn đáp án --</option><option value="a">a. Kết quả xử lí thông tin (quyết định)</option><option value="b">b. Tiếp nhận thông tin</option><option value="c">c. Xử lí thông tin</option></select>
+          <p>2. Bộ não phân tích tín hiệu và nhận ra cần dừng lại</p>
+          <select id="b2m2"><option value="">-- Chọn đáp án --</option><option value="a">a. Kết quả xử lí thông tin (quyết định)</option><option value="b">b. Tiếp nhận thông tin</option><option value="c">c. Xử lí thông tin</option></select>
+          <p>3. Dừng xe trước vạch</p>
+          <select id="b2m3"><option value="">-- Chọn đáp án --</option><option value="a">a. Kết quả xử lí thông tin (quyết định)</option><option value="b">b. Tiếp nhận thông tin</option><option value="c">c. Xử lí thông tin</option></select>
+        </div>
+        <div style="margin:12px 0;padding:12px;border:1px solid #dce5f3;border-radius:10px">
+          <h4>4. Trả lời ngắn</h4>
+          <p><b>Câu 4.</b> Khi nhấn nút dấu cộng (+) trên bảng điều khiển bếp từ, bếp nhận được thông tin gì và thực hiện hành động nào?</p>
+          <textarea id="b2short1" placeholder="Nhập câu trả lời..." style="width:100%;min-height:75px;padding:10px"></textarea>
+          <button type="button" class="gray" data-answer="b2ans1">Xem đáp án gợi ý</button>
+          <p id="b2ans1" hidden>Bếp nhận tín hiệu nhấn nút dấu cộng (+), xử lí tín hiệu và tăng nhiệt độ nấu.</p>
+        </div>
+        <div style="margin:12px 0;padding:12px;border:1px solid #dce5f3;border-radius:10px">
+          <h4>5. Tình huống: Nghe tiếng trống trường</h4>
+          <p>Minh đang làm bài tập thì nghe tiếng trống báo hết giờ học.</p>
+          <p><b>a)</b> Minh nhận được thông tin gì? Qua giác quan nào?</p><textarea id="b2short2a" placeholder="Nhập câu trả lời..." style="width:100%;min-height:65px;padding:10px"></textarea>
+          <button type="button" class="gray" data-answer="b2ans2a">Xem đáp án gợi ý</button><p id="b2ans2a" hidden>Minh nghe tiếng trống qua tai.</p>
+          <p><b>b)</b> Bộ phận nào xử lí thông tin đó?</p><textarea id="b2short2b" placeholder="Nhập câu trả lời..." style="width:100%;min-height:65px;padding:10px"></textarea>
+          <button type="button" class="gray" data-answer="b2ans2b">Xem đáp án gợi ý</button><p id="b2ans2b" hidden>Bộ não xử lí thông tin.</p>
+          <p><b>c)</b> Kết quả xử lí thông tin là gì? Minh có thể làm gì?</p><textarea id="b2short2c" placeholder="Nhập câu trả lời..." style="width:100%;min-height:65px;padding:10px"></textarea>
+          <button type="button" class="gray" data-answer="b2ans2c">Xem đáp án gợi ý</button><p id="b2ans2c" hidden>Minh biết đã hết giờ học, có thể dừng viết, cất sách vở hoặc đứng lên chào giáo viên.</p>
+        </div>
+        <div style="margin:12px 0;padding:12px;border:1px solid #dce5f3;border-radius:10px">
+          <h4>6. Tình huống: Sử dụng điều khiển tivi</h4>
+          <p>Minh hướng điều khiển về phía tivi và nhấn nút số 3.</p>
+          <p><b>a)</b> Thiết bị nào tiếp nhận và xử lí thông tin?</p><textarea id="b2short3a" placeholder="Nhập câu trả lời..." style="width:100%;min-height:65px;padding:10px"></textarea>
+          <button type="button" class="gray" data-answer="b2ans3a">Xem đáp án gợi ý</button><p id="b2ans3a" hidden>Tivi tiếp nhận và xử lí tín hiệu từ điều khiển.</p>
+          <p><b>b)</b> Tivi nhận thông tin gì và kết quả là gì?</p><textarea id="b2short3b" placeholder="Nhập câu trả lời..." style="width:100%;min-height:65px;padding:10px"></textarea>
+          <button type="button" class="gray" data-answer="b2ans3b">Xem đáp án gợi ý</button><p id="b2ans3b" hidden>Tivi nhận tín hiệu nhấn nút số 3 và chuyển sang kênh số 3.</p>
+        </div>
+        <button id="b2check" type="button">Kiểm tra đáp án</button>
+        <button id="b2reset" type="button" class="gray">Làm lại Bài 2</button>
+        <div id="b2result" class="status" style="display:none;margin-top:12px"></div>
+        `);
 
-    noiDungBai1.kienThuc.forEach(kienThuc => {
-        const p = document.createElement("p");
-        p.textContent = "• " + kienThuc;
-        noiDung.appendChild(p);
-    });
-
-    const tieuDeQuiz = document.createElement("h4");
-    tieuDeQuiz.textContent = "✍️ Câu hỏi trắc nghiệm";
-    noiDung.appendChild(tieuDeQuiz);
-
-    const form = document.createElement("div");
-    noiDungBai1.cauHoi.forEach((cau, i) => {
-        const nhom = document.createElement("div");
-        nhom.style.marginBottom = "16px";
-
-        const p = document.createElement("p");
-        p.textContent = cau.hoi;
-        nhom.appendChild(p);
-
-        cau.dapAn.forEach((dapAn, j) => {
-            const label = document.createElement("label");
-            label.style.display = "block";
-
-            const radio = document.createElement("input");
-            radio.type = "radio";
-            radio.name = "cau" + i;
-            radio.value = j;
-            radio.style.width = "auto";
-
-            label.append(radio, document.createTextNode(" " + dapAn));
-            nhom.appendChild(label);
+        noiDung.querySelectorAll("button[data-answer]").forEach(button => {
+            button.addEventListener("click", () => {
+                const answer = document.getElementById(button.dataset.answer);
+                answer.hidden = !answer.hidden;
+            });
         });
-        form.appendChild(nhom);
-    });
 
-    const nut = document.createElement("button");
-    nut.textContent = "Chấm điểm";
-    nut.onclick = function() {
-        let diem = 0;
-        let daLam = 0;
+        document.getElementById("b2check").addEventListener("click", () => {
+            let diem = 0;
+            const q = noiDung.querySelector('input[name="b2q1"]:checked');
+            if (q && q.value === "B") diem++;
 
-        noiDungBai1.cauHoi.forEach((cau, i) => {
-            const dapAnChon = form.querySelector(
-                'input[name="cau' + i + '"]:checked'
-            );
-            if (dapAnChon) {
-                daLam++;
-                if (Number(dapAnChon.value) === cau.dung) diem++;
-            }
+            const chuanHoa = s => (s || "").trim().toLocaleLowerCase("vi").normalize("NFC");
+            const blanks = [
+                ["b2blank1", "thông tin"],
+                ["b2blank2", "bộ não"],
+                ["b2blank3", "quyết định"]
+            ];
+            let diemDien = 0;
+            blanks.forEach(([id, answer]) => {
+                if (chuanHoa(document.getElementById(id).value) === answer) diemDien++;
+            });
+            diem += diemDien;
+
+            const noi = [["b2m1", "b"], ["b2m2", "c"], ["b2m3", "a"]];
+            let diemNoi = 0;
+            noi.forEach(([id, answer]) => {
+                if (document.getElementById(id).value === answer) diemNoi++;
+            });
+            diem += diemNoi;
+
+            const result = document.getElementById("b2result");
+            result.style.display = "block";
+            result.innerHTML = "<b>Kết quả: " + diem + "/7 điểm</b>" +
+                "<p>Câu 1: " + (q && q.value === "B" ? "Đúng." : "Chưa đúng. Đáp án: B. Bộ não.") + "</p>" +
+                "<p>Điền từ: đúng " + diemDien + "/3. Đáp án: thông tin – bộ não – quyết định.</p>" +
+                "<p>Nối ý: đúng " + diemNoi + "/3. Đáp án: 1-b, 2-c, 3-a.</p>" +
+                "<p>Các câu trả lời ngắn chưa được chấm tự động. Hãy bấm “Xem đáp án gợi ý” để tự đối chiếu.</p>";
+            result.scrollIntoView({behavior: "smooth", block: "center"});
         });
 
-        if (daLam < noiDungBai1.cauHoi.length) {
-            alert("Bạn hãy trả lời đủ 5 câu nhé!");
-            return;
-        }
-        alert("Bạn được " + diem + "/5 điểm!");
-    };
+        document.getElementById("b2reset").addEventListener("click", () => {
+            noiDung.querySelectorAll('input[type="radio"]').forEach(el => el.checked = false);
+            noiDung.querySelectorAll('input[type="text"], textarea').forEach(el => el.value = "");
+            noiDung.querySelectorAll("select").forEach(el => el.value = "");
+            noiDung.querySelectorAll("[data-answer]").forEach(button => {
+                document.getElementById(button.dataset.answer).hidden = true;
+            });
+            const result = document.getElementById("b2result");
+            result.style.display = "none";
+            result.innerHTML = "";
+        });
+        return;
+    }
 
-    form.appendChild(nut);
-    noiDung.appendChild(form);
+    const p = document.createElement("p");
+    p.textContent = "Nội dung kiến thức và câu hỏi của bài này sẽ được bổ sung sau.";
+    noiDung.appendChild(p);
 }
+
 
 khoiTaoDanhSachTinHoc();
 
