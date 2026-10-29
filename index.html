@@ -715,38 +715,7 @@ const danhSachBaiTinHoc = [
     "Bài 16. Công việc của em và sự trợ giúp của máy tính"
 ];
 
-function khoiTaoDanhSachTinHoc() {
-    const chon = document.getElementById("chonBaiTinHoc");
-
-    if (!chon || chon.options.length > 1) return;
-
-    danhSachBaiTinHoc.forEach((ten, index) => {
-        const option = document.createElement("option");
-        option.value = index;
-        option.textContent = ten;
-        chon.appendChild(option);
-    });
-}
-
-function moBaiTinHoc() {
-    const chon = document.getElementById("chonBaiTinHoc");
-    const noiDung = document.getElementById("noiDungBaiTinHoc");
-
-    if (!chon || !noiDung) return;
-
-    if (chon.value === "") {
-        noiDung.textContent = "";
-        return;
-    }
-
-    const ten = danhSachBaiTinHoc[Number(chon.value)];
-
-    noiDung.replaceChildren();
-
-    const tieuDe = document.createElement("h3");
-    tieuDe.textContent = ten;
-
-    const noiDungBai1 = {
+const noiDungBai1 = {
     kienThuc: [
         "Thông tin giúp con người hiểu biết về thế giới xung quanh.",
         "Con người thu nhận thông tin bằng các giác quan như mắt, tai, mũi, lưỡi và da.",
@@ -781,100 +750,101 @@ function moBaiTinHoc() {
     ]
 };
 
+function khoiTaoDanhSachTinHoc() {
+    const chon = document.getElementById("chonBaiTinHoc");
+    if (!chon || chon.options.length > 1) return;
+
+    danhSachBaiTinHoc.forEach((ten, index) => {
+        const option = document.createElement("option");
+        option.value = index;
+        option.textContent = ten;
+        chon.appendChild(option);
+    });
+}
+
 function moBaiTinHoc() {
     const chon = document.getElementById("chonBaiTinHoc");
     const noiDung = document.getElementById("noiDungBaiTinHoc");
-
     if (!chon || !noiDung) return;
 
-    if (chon.value === "") {
-        noiDung.replaceChildren();
+    noiDung.replaceChildren();
+    if (chon.value === "") return;
+
+    const tieuDe = document.createElement("h3");
+    tieuDe.textContent = danhSachBaiTinHoc[Number(chon.value)];
+    noiDung.appendChild(tieuDe);
+
+    if (Number(chon.value) !== 0) {
+        const p = document.createElement("p");
+        p.textContent = "Nội dung kiến thức và câu hỏi của bài này sẽ được bổ sung sau.";
+        noiDung.appendChild(p);
         return;
     }
 
-    const ten = danhSachBaiTinHoc[Number(chon.value)];
-    noiDung.replaceChildren();
+    const tieuDeKT = document.createElement("h4");
+    tieuDeKT.textContent = "📖 Kiến thức cần nhớ";
+    noiDung.appendChild(tieuDeKT);
 
-    const tieuDe = document.createElement("h3");
-    tieuDe.textContent = ten;
-    noiDung.appendChild(tieuDe);
+    noiDungBai1.kienThuc.forEach(kienThuc => {
+        const p = document.createElement("p");
+        p.textContent = "• " + kienThuc;
+        noiDung.appendChild(p);
+    });
 
-    if (Number(chon.value) === 0) {
-        const tieuDeKT = document.createElement("h4");
-        tieuDeKT.textContent = "📖 Kiến thức cần nhớ";
-        noiDung.appendChild(tieuDeKT);
+    const tieuDeQuiz = document.createElement("h4");
+    tieuDeQuiz.textContent = "✍️ Câu hỏi trắc nghiệm";
+    noiDung.appendChild(tieuDeQuiz);
 
-        noiDungBai1.kienThuc.forEach(kienThuc => {
-            const p = document.createElement("p");
-            p.textContent = "• " + kienThuc;
-            noiDung.appendChild(p);
+    const form = document.createElement("div");
+    noiDungBai1.cauHoi.forEach((cau, i) => {
+        const nhom = document.createElement("div");
+        nhom.style.marginBottom = "16px";
+
+        const p = document.createElement("p");
+        p.textContent = cau.hoi;
+        nhom.appendChild(p);
+
+        cau.dapAn.forEach((dapAn, j) => {
+            const label = document.createElement("label");
+            label.style.display = "block";
+
+            const radio = document.createElement("input");
+            radio.type = "radio";
+            radio.name = "cau" + i;
+            radio.value = j;
+            radio.style.width = "auto";
+
+            label.append(radio, document.createTextNode(" " + dapAn));
+            nhom.appendChild(label);
         });
+        form.appendChild(nhom);
+    });
 
-        const tieuDeQuiz = document.createElement("h4");
-        tieuDeQuiz.textContent = "✍️ Câu hỏi trắc nghiệm";
-        noiDung.appendChild(tieuDeQuiz);
-
-        const form = document.createElement("div");
+    const nut = document.createElement("button");
+    nut.textContent = "Chấm điểm";
+    nut.onclick = function() {
+        let diem = 0;
+        let daLam = 0;
 
         noiDungBai1.cauHoi.forEach((cau, i) => {
-            const nhom = document.createElement("div");
-            nhom.style.marginBottom = "16px";
-
-            const p = document.createElement("p");
-            p.textContent = cau.hoi;
-            nhom.appendChild(p);
-
-            cau.dapAn.forEach((dapAn, j) => {
-                const label = document.createElement("label");
-                label.style.display = "block";
-                label.style.margin = "6px 0";
-
-                const radio = document.createElement("input");
-                radio.type = "radio";
-                radio.name = "cau" + i;
-                radio.value = j;
-
-                label.append(radio, document.createTextNode(" " + dapAn));
-                nhom.appendChild(label);
-            });
-
-            form.appendChild(nhom);
+            const dapAnChon = form.querySelector(
+                'input[name="cau' + i + '"]:checked'
+            );
+            if (dapAnChon) {
+                daLam++;
+                if (Number(dapAnChon.value) === cau.dung) diem++;
+            }
         });
 
-        const nut = document.createElement("button");
-        nut.textContent = "Chấm điểm";
-        nut.onclick = function() {
-            let diem = 0;
-            let daLam = 0;
+        if (daLam < noiDungBai1.cauHoi.length) {
+            alert("Bạn hãy trả lời đủ 5 câu nhé!");
+            return;
+        }
+        alert("Bạn được " + diem + "/5 điểm!");
+    };
 
-            noiDungBai1.cauHoi.forEach((cau, i) => {
-                const chonDapAn = form.querySelector(
-                    'input[name="cau' + i + '"]:checked'
-                );
-
-                if (chonDapAn) {
-                    daLam++;
-                    if (Number(chonDapAn.value) === cau.dung) diem++;
-                }
-            });
-
-            if (daLam < noiDungBai1.cauHoi.length) {
-                alert("Bạn hãy trả lời đủ 5 câu nhé!");
-                return;
-            }
-
-            alert("Bạn được " + diem + "/5 điểm!");
-        };
-
-        form.appendChild(nut);
-        noiDung.appendChild(form);
-    } else {
-        const p = document.createElement("p");
-        p.textContent =
-            "Nội dung kiến thức và câu hỏi của bài này sẽ được bổ sung sau.";
-        noiDung.appendChild(p);
-    }
-}
+    form.appendChild(nut);
+    noiDung.appendChild(form);
 }
 
 khoiTaoDanhSachTinHoc();
