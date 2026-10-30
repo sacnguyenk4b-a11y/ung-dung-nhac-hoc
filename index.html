@@ -949,9 +949,86 @@ function moBaiTinHoc() {
         return;
     }
 
+    if (viTri === 2) {
+        noiDung.insertAdjacentHTML("beforeend", `
+        <div class="status"><b>📖 Kiến thức cần nhớ</b><p>• Máy tính để bàn gồm thân máy, màn hình, bàn phím và chuột. Một số máy tính còn kết nối với loa.</p><p>• Thân máy chứa bộ xử lí và các bộ phận quan trọng, điều khiển hoạt động của máy tính.</p><p>• Màn hình hiển thị kết quả; bàn phím nhập thông tin; chuột giúp điều khiển; loa phát âm thanh.</p><p>• Không chạm vào dây điện bị hở hoặc tự ý sửa chữa thiết bị điện. Cần báo ngay cho giáo viên hoặc người lớn.</p></div>
+        <div class="lesson"><h4>1. Trắc nghiệm (1 điểm)</h4><p><b>Câu 1.</b> Bộ phận nào của máy tính để bàn chứa bộ xử lí, được xem như “bộ não” điều khiển mọi hoạt động của máy tính?</p>
+        <label><input type="radio" name="b3q1" value="A" style="width:auto"> A. Màn hình</label><label><input type="radio" name="b3q1" value="B" style="width:auto"> B. Thân máy</label><label><input type="radio" name="b3q1" value="C" style="width:auto"> C. Bàn phím</label><label><input type="radio" name="b3q1" value="D" style="width:auto"> D. Chuột máy tính</label></div>
+        <div class="lesson"><h4>2. Ghép nối (4 điểm)</h4><p>Chọn chức năng tương ứng với từng bộ phận:</p>
+        <p>1. Màn hình <select id="b3m1"><option value="">-- Chọn --</option><option value="a">a. Nhập thông tin bằng các phím</option><option value="b">b. Phát ra âm thanh</option><option value="c">c. Hiển thị kết quả</option><option value="d">d. Điều khiển máy tính</option></select></p>
+        <p>2. Bàn phím <select id="b3m2"><option value="">-- Chọn --</option><option value="a">a. Nhập thông tin bằng các phím</option><option value="b">b. Phát ra âm thanh</option><option value="c">c. Hiển thị kết quả</option><option value="d">d. Điều khiển máy tính</option></select></p>
+        <p>3. Chuột <select id="b3m3"><option value="">-- Chọn --</option><option value="a">a. Nhập thông tin bằng các phím</option><option value="b">b. Phát ra âm thanh</option><option value="c">c. Hiển thị kết quả</option><option value="d">d. Điều khiển máy tính</option></select></p>
+        <p>4. Loa <select id="b3m4"><option value="">-- Chọn --</option><option value="a">a. Nhập thông tin bằng các phím</option><option value="b">b. Phát ra âm thanh</option><option value="c">c. Hiển thị kết quả</option><option value="d">d. Điều khiển máy tính</option></select></p></div>
+        <div class="lesson"><h4>3. Tình huống an toàn điện</h4><p>Khi thực hành trong phòng máy, Nam phát hiện dây điện nối vào máy tính bị bong tróc vỏ nhựa, làm hở lõi đồng.</p><p><b>a)</b> Nam có nên tự tay chạm vào hoặc sửa dây điện không?</p><textarea id="b3short1" placeholder="Nhập câu trả lời..." style="width:100%;min-height:65px;padding:10px"></textarea><button type="button" class="gray" data-answer="b3ans1">Xem đáp án gợi ý</button><p id="b3ans1" hidden>Không. Dây điện bị hở có thể gây điện giật, rất nguy hiểm.</p><p><b>b)</b> Nam nên làm gì?</p><textarea id="b3short2" placeholder="Nhập câu trả lời..." style="width:100%;min-height:65px;padding:10px"></textarea><button type="button" class="gray" data-answer="b3ans2">Xem đáp án gợi ý</button><p id="b3ans2" hidden>Nam cần tránh xa dây điện và báo ngay cho giáo viên hoặc người lớn quản lí phòng máy.</p></div>
+        <button id="b3check" type="button">Chấm điểm phần tự động</button><button id="b3reset" type="button" class="gray">Làm lại Bài 3</button><div id="b3result" class="status" style="display:none;margin-top:12px"></div>`);
+        ganSuKienBaiMoi(noiDung, "b3", [["b3q1", "B"]], [["b3m1", "c"], ["b3m2", "a"], ["b3m3", "d"], ["b3m4", "b"]], 5);
+        return;
+    }
+
+    if (viTri === 3) {
+        noiDung.insertAdjacentHTML("beforeend", `
+        <div class="status"><b>📖 Kiến thức cần nhớ</b><p>• Mở một phần mềm bằng cách nháy đúp chuột vào biểu tượng của phần mềm.</p><p>• Kéo thả chuột để di chuyển biểu tượng; nháy nút phải chuột để mở bảng chọn.</p><p>• Khi kết thúc làm việc, cần tắt máy đúng cách: chọn Start → Power → Shut down và chờ máy tắt hoàn toàn.</p><p>• Không tắt máy đột ngột bằng công tắc hoặc rút phích cắm khi máy đang hoạt động.</p></div>
+        <div class="lesson"><h4>1. Điền khuyết (3 điểm)</h4><p>Chọn từ/cụm từ thích hợp: Start – Shut down – tắt.</p><p>Bước 1: Nháy chuột vào nút <select id="b4blank1"><option value="">-- Chọn --</option><option>Start</option><option>Shut down</option><option>tắt</option></select> ở góc dưới bên trái màn hình.</p><p>Bước 2: Nháy chuột vào biểu tượng Power.</p><p>Bước 3: Nháy chuột chọn <select id="b4blank2"><option value="">-- Chọn --</option><option>Start</option><option>Shut down</option><option>tắt</option></select> để tắt máy.</p><p>Bước 4: Khi máy đã tắt hoàn toàn, có thể tắt màn hình bằng công tắc của màn hình nếu cần: <select id="b4blank3"><option value="">-- Chọn --</option><option>Start</option><option>Shut down</option><option>tắt</option></select>.</p></div>
+        <div class="lesson"><h4>2. Thao tác chuột</h4><p>a) Mở phần mềm Microsoft Word trên màn hình nền bằng thao tác nào?</p><textarea id="b4short1" placeholder="Nhập câu trả lời..." style="width:100%;min-height:55px;padding:10px"></textarea><button type="button" class="gray" data-answer="b4ans1">Xem đáp án gợi ý</button><p id="b4ans1" hidden>Nháy đúp chuột trái vào biểu tượng Microsoft Word.</p><p>b) Di chuyển biểu tượng Recycle Bin từ góc trái sang góc phải màn hình bằng thao tác nào?</p><textarea id="b4short2" placeholder="Nhập câu trả lời..." style="width:100%;min-height:55px;padding:10px"></textarea><button type="button" class="gray" data-answer="b4ans2">Xem đáp án gợi ý</button><p id="b4ans2" hidden>Kéo thả chuột.</p><p>c) Xem bảng chọn công việc của một tệp tin bằng thao tác nào?</p><textarea id="b4short3" placeholder="Nhập câu trả lời..." style="width:100%;min-height:55px;padding:10px"></textarea><button type="button" class="gray" data-answer="b4ans3">Xem đáp án gợi ý</button><p id="b4ans3" hidden>Nháy nút phải chuột vào tệp tin.</p></div>
+        <div class="lesson"><h4>3. Tình huống sử dụng máy tính an toàn</h4><p>Cuối buổi học, Bình nhấn trực tiếp nút nguồn trên thân máy để tắt máy tính rồi rút phích cắm điện.</p><p><b>a)</b> Hành động đó đúng hay sai? Vì sao?</p><textarea id="b4short4" placeholder="Nhập câu trả lời..." style="width:100%;min-height:65px;padding:10px"></textarea><button type="button" class="gray" data-answer="b4ans4">Xem đáp án gợi ý</button><p id="b4ans4" hidden>Hành động đó không đúng. Tắt máy đột ngột có thể làm mất dữ liệu hoặc gây lỗi hệ thống.</p><p><b>b)</b> Em khuyên Bình thực hiện quy trình nào?</p><textarea id="b4short5" placeholder="Nhập câu trả lời..." style="width:100%;min-height:65px;padding:10px"></textarea><button type="button" class="gray" data-answer="b4ans5">Xem đáp án gợi ý</button><p id="b4ans5" hidden>Đóng các phần mềm đang mở, chọn Start → Power → Shut down, chờ máy tắt hoàn toàn rồi mới tắt màn hình.</p></div>
+        <button id="b4check" type="button">Chấm điểm phần tự động</button><button id="b4reset" type="button" class="gray">Làm lại Bài 4</button><div id="b4result" class="status" style="display:none;margin-top:12px"></div>`);
+        ganSuKienBaiMoi(noiDung, "b4", [], [["b4blank1", "Start"], ["b4blank2", "Shut down"], ["b4blank3", "tắt"]], 3);
+        return;
+    }
+
+    if (viTri === 4) {
+        noiDung.insertAdjacentHTML("beforeend", `
+        <div class="status"><b>📖 Kiến thức cần nhớ</b><p>• Hai phím F và J trên hàng phím cơ sở có gờ nổi để đặt hai ngón tay trỏ.</p><p>• Vị trí xuất phát: tay trái đặt các ngón lên A, S, D, F; tay phải đặt lên J, K, L, ;. Hai ngón cái đặt nhẹ trên phím cách.</p><p>• Mỗi ngón tay phụ trách một nhóm phím. Sau khi gõ, đưa ngón tay trở về vị trí xuất phát.</p></div>
+        <div class="lesson"><h4>1. Trắc nghiệm (1 điểm)</h4><p><b>Câu 1.</b> Hai phím nào trên hàng phím cơ sở có gờ nổi để đặt hai ngón tay trỏ?</p><label><input type="radio" name="b5q1" value="A" style="width:auto"> A. A và L</label><label><input type="radio" name="b5q1" value="B" style="width:auto"> B. F và J</label><label><input type="radio" name="b5q1" value="C" style="width:auto"> C. G và H</label><label><input type="radio" name="b5q1" value="D" style="width:auto"> D. C và M</label></div>
+        <div class="lesson"><h4>2. Điền khuyết (3 điểm)</h4><p>Chọn các cụm từ: xuất phát – hàng phím cơ sở – phụ trách.</p><p>Khi gõ bàn phím, hai bàn tay đặt ở vị trí <select id="b5blank1"><option value="">-- Chọn --</option><option>xuất phát</option><option>hàng phím cơ sở</option><option>phụ trách</option></select> trên <select id="b5blank2"><option value="">-- Chọn --</option><option>xuất phát</option><option>hàng phím cơ sở</option><option>phụ trách</option></select>. Mỗi ngón tay chỉ gõ đúng các phím <select id="b5blank3"><option value="">-- Chọn --</option><option>xuất phát</option><option>hàng phím cơ sở</option><option>phụ trách</option></select> của mình. Khi gõ xong, đưa ngón tay trở về vị trí xuất phát.</p></div>
+        <div class="lesson"><h4>3. Tình huống luyện gõ bàn phím</h4><p>An chỉ dùng hai ngón tay trỏ để gõ và luôn nhìn vào bàn phím.</p><p><b>a)</b> Cách gõ này có hạn chế gì?</p><textarea id="b5short1" placeholder="Nhập câu trả lời..." style="width:100%;min-height:65px;padding:10px"></textarea><button type="button" class="gray" data-answer="b5ans1">Xem đáp án gợi ý</button><p id="b5ans1" hidden>Cách gõ có thể chậm, dễ sai và khiến mắt, cổ nhanh mỏi do phải nhìn xuống bàn phím liên tục.</p><p><b>b)</b> Hướng dẫn An đặt tay ở vị trí xuất phát.</p><textarea id="b5short2" placeholder="Nhập câu trả lời..." style="width:100%;min-height:65px;padding:10px"></textarea><button type="button" class="gray" data-answer="b5ans2">Xem đáp án gợi ý</button><p id="b5ans2" hidden>Đặt ngón trỏ trái lên F, ngón trỏ phải lên J; các ngón còn lại lần lượt đặt lên A, S, D và K, L, ;. Hai ngón cái đặt nhẹ trên phím cách.</p></div>
+        <button id="b5check" type="button">Chấm điểm phần tự động</button><button id="b5reset" type="button" class="gray">Làm lại Bài 5</button><div id="b5result" class="status" style="display:none;margin-top:12px"></div>`);
+        ganSuKienBaiMoi(noiDung, "b5", [["b5q1", "B"]], [["b5blank1", "xuất phát"], ["b5blank2", "hàng phím cơ sở"], ["b5blank3", "phụ trách"]], 4);
+        return;
+    }
+
     const p = document.createElement("p");
     p.textContent = "Nội dung kiến thức và câu hỏi của bài này sẽ được bổ sung sau.";
     noiDung.appendChild(p);
+}
+
+function ganSuKienBaiMoi(noiDung, maBai, tracNghiem, dienTu, tongDiem) {
+    noiDung.querySelectorAll("button[data-answer]").forEach(button => {
+        button.addEventListener("click", () => {
+            const answer = noiDung.querySelector("#" + button.dataset.answer);
+            if (answer) answer.hidden = !answer.hidden;
+        });
+    });
+    const nutCham = noiDung.querySelector("#" + maBai + "check");
+    const nutLamLai = noiDung.querySelector("#" + maBai + "reset");
+    const ketQua = noiDung.querySelector("#" + maBai + "result");
+    nutCham.addEventListener("click", () => {
+        let diem = 0, daTraLoi = 0;
+        tracNghiem.forEach(([name, dapAn]) => {
+            const chon = noiDung.querySelector('input[name="' + name + '"]:checked');
+            if (chon) { daTraLoi++; if (chon.value === dapAn) diem++; }
+        });
+        let soDien = 0;
+        dienTu.forEach(([id, dapAn]) => {
+            const o = noiDung.querySelector("#" + id);
+            if (o && o.value !== "") { daTraLoi++; if (o.value.trim().toLocaleLowerCase("vi") === dapAn.toLocaleLowerCase("vi")) { diem++; soDien++; } }
+        });
+        if (daTraLoi < tracNghiem.length + dienTu.length) { alert("Bạn hãy hoàn thành các câu hỏi có chấm điểm trước nhé!"); return; }
+        ketQua.style.display = "block";
+        ketQua.textContent = "Kết quả: " + diem + "/" + tongDiem + " điểm. Phần trả lời ngắn chưa được chấm tự động; hãy xem đáp án gợi ý để tự đối chiếu.";
+        ketQua.scrollIntoView({behavior:"smooth", block:"center"});
+    });
+    nutLamLai.addEventListener("click", () => {
+        noiDung.querySelectorAll('input[type="radio"]').forEach(o => o.checked = false);
+        noiDung.querySelectorAll("select").forEach(o => o.value = "");
+        noiDung.querySelectorAll("textarea").forEach(o => o.value = "");
+        noiDung.querySelectorAll("button[data-answer]").forEach(button => {
+            const answer = noiDung.querySelector("#" + button.dataset.answer);
+            if (answer) answer.hidden = true;
+        });
+        ketQua.style.display = "none";
+        ketQua.textContent = "";
+    });
 }
 
 
