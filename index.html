@@ -148,7 +148,25 @@ label input[type="checkbox"] {
 <div class="container">
 
 <h1>📚 Góc học tập của tôi</h1>
+<div class="card" id="khungDangNhap">
+    <h2>👩‍🎓 Thông tin học sinh</h2>
 
+    <label>Chọn lớp:</label>
+    <select id="chonLop">
+        <option value="">-- Chọn lớp --</option>
+    </select>
+
+    <label>Chọn họ và tên:</label>
+    <select id="chonHocSinh" disabled>
+        <option value="">-- Chọn học sinh --</option>
+    </select>
+
+    <button onclick="vaoHoc()">Vào học</button>
+
+    <p id="trangThaiHocSinh" class="status">
+        Đang chuẩn bị tải danh sách học sinh...
+    </p>
+</div>
 <div class="card">
     <h2>⏰ Nhắc học hằng ngày</h2>
 
