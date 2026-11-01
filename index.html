@@ -776,6 +776,158 @@ function moBaiTinHoc() {
     noiDung.appendChild(tieuDe);
 
     if (viTri === 0) {
+        
+        // ===== VIDEO BÀI 1 VÀ CÂU HỎI DỪNG =====
+        const khungVideo = document.createElement("div");
+        khungVideo.style.cssText = "margin:20px 0;padding:15px;background:#f0f7ff;border-radius:12px";
+
+        const tieuDeVideo = document.createElement("h4");
+        tieuDeVideo.textContent = "🎬 Video bài học có câu hỏi tương tác";
+        khungVideo.appendChild(tieuDeVideo);
+
+        const playerBox = document.createElement("div");
+        playerBox.id = "videoBai1Player";
+        playerBox.style.cssText = "width:100%;aspect-ratio:16/9";
+        khungVideo.appendChild(playerBox);
+
+        const hopCauHoi = document.createElement("div");
+        hopCauHoi.style.cssText = "display:none;margin-top:15px;padding:15px;background:white;border-radius:10px";
+        khungVideo.appendChild(hopCauHoi);
+
+        noiDung.appendChild(khungVideo);
+
+        const danhSachDung = [
+            {
+                giay: 178,
+                hoi: "Font chữ được dùng cho 2 khổ thơ là font nào?",
+                dapAn: ["A. Times New Roman", "B. Arial", "C. Calibri", "D. Tahoma"],
+                dung: 1
+            },
+            {
+                giay: 253,
+                hoi: "Để chọn font chữ, ta vào nhóm lệnh nào?",
+                dapAn: ["A. Clipboard", "B. Paragraph", "C. Font", "D. Styles"],
+                dung: 2
+            }
+        ];
+
+        // Xóa bộ đếm cũ nếu mở lại bài học
+        if (window.__bai1VideoTimer) {
+            clearInterval(window.__bai1VideoTimer);
+        }
+
+        if (window.__bai1Player) {
+            window.__bai1Player.destroy();
+            window.__bai1Player = null;
+        }
+
+        // Tải YouTube IFrame API
+        function taiYouTubeAPI() {
+            if (window.YT && window.YT.Player) {
+                return Promise.resolve();
+            }
+
+            if (!window.__ytApiPromise) {
+                window.__ytApiPromise = new Promise(resolve => {
+                    window.__ytApiReady = resolve;
+
+                    if (!document.querySelector('script[src="https://www.youtube.com/iframe_api"]')) {
+                        const script = document.createElement("script");
+                        script.src = "https://www.youtube.com/iframe_api";
+                        document.head.appendChild(script);
+                    }
+                });
+            }
+
+            return window.__ytApiPromise;
+        }
+
+        taiYouTubeAPI().then(() => {
+            const player = new YT.Player("videoBai1Player", {
+                videoId: "pzaXXKvJDQg",
+                playerVars: {
+                    playsinline: 1,
+                    rel: 0
+                },
+                events: {
+                    onReady: function() {
+                        const daDung = new Set();
+
+                        window.__bai1VideoTimer = setInterval(() => {
+                            if (!player.getCurrentTime || player.getPlayerState() !== YT.PlayerState.PLAYING) return;
+
+                            const thoiGian = player.getCurrentTime();
+
+                            danhSachDung.forEach((cau, index) => {
+                                if (thoiGian >= cau.giay && !daDung.has(index)) {
+                                    daDung.add(index);
+                                    player.pauseVideo();
+
+                                    hopCauHoi.innerHTML = "";
+                                    hopCauHoi.style.display = "block";
+
+                                    const p = document.createElement("p");
+                                    p.textContent = "❓ " + cau.hoi;
+                                    hopCauHoi.appendChild(p);
+
+                                    cau.dapAn.forEach((dapAn, j) => {
+                                        const label = document.createElement("label");
+                                        label.style.cssText = "display:block;margin:10px 0";
+
+                                        const radio = document.createElement("input");
+                                        radio.type = "radio";
+                                        radio.name = "videoBai1Cau" + index;
+                                        radio.value = j;
+                                        radio.style.width = "auto";
+
+                                        label.append(radio, document.createTextNode(" " + dapAn));
+                                        hopCauHoi.appendChild(label);
+                                    });
+
+                                    const nutTraLoi = document.createElement("button");
+                                    nutTraLoi.textContent = "Kiểm tra đáp án";
+                                    hopCauHoi.appendChild(nutTraLoi);
+
+                                    nutTraLoi.onclick = function() {
+                                        const chon = hopCauHoi.querySelector(
+                                            'input[name="videoBai1Cau' + index + '"]:checked'
+                                        );
+
+                                        if (!chon) {
+                                            alert("Bạn hãy chọn một đáp án nhé!");
+                                            return;
+                                        }
+
+                                        const dung = Number(chon.value) === cau.dung;
+
+                                        const ketQua = document.createElement("p");
+                                        ketQua.textContent = dung
+                                            ? "🎉 Chính xác! Bạn được 1 điểm."
+                                            : "Chưa chính xác. Đáp án đúng là " + cau.dapAn[cau.dung];
+                                        hopCauHoi.appendChild(ketQua);
+
+                                        nutTraLoi.disabled = true;
+
+                                        const nutTiepTuc = document.createElement("button");
+                                        nutTiepTuc.textContent = "▶ Tiếp tục xem video";
+                                        hopCauHoi.appendChild(nutTiepTuc);
+
+                                        nutTiepTuc.onclick = function() {
+                                            hopCauHoi.style.display = "none";
+                                            player.playVideo();
+                                        };
+                                    };
+                                }
+                            });
+                        }, 250);
+                    }
+                }
+            });
+
+            window.__bai1Player = player;
+        });
+        // ===== KẾT THÚC VIDEO BÀI 1 =====
+
         const tieuDeKT = document.createElement("h4");
         tieuDeKT.textContent = "📖 Kiến thức cần nhớ";
         noiDung.appendChild(tieuDeKT);
