@@ -823,24 +823,26 @@ function moBaiTinHoc() {
 
         // Tải YouTube IFrame API
         function taiYouTubeAPI() {
-            if (window.YT && window.YT.Player) {
-                return Promise.resolve();
+    if (window.YT && window.YT.Player) {
+        return Promise.resolve();
+    }
+
+    if (!window.__ytApiPromise) {
+        window.__ytApiPromise = new Promise(resolve => {
+            window.onYouTubeIframeAPIReady = function() {
+                resolve();
+            };
+
+            if (!document.querySelector('script[src="https://www.youtube.com/iframe_api"]')) {
+                const script = document.createElement("script");
+                script.src = "https://www.youtube.com/iframe_api";
+                document.head.appendChild(script);
             }
+        });
+    }
 
-            if (!window.__ytApiPromise) {
-                window.__ytApiPromise = new Promise(resolve => {
-                    window.__ytApiReady = resolve;
-
-                    if (!document.querySelector('script[src="https://www.youtube.com/iframe_api"]')) {
-                        const script = document.createElement("script");
-                        script.src = "https://www.youtube.com/iframe_api";
-                        document.head.appendChild(script);
-                    }
-                });
-            }
-
-            return window.__ytApiPromise;
-        }
+    return window.__ytApiPromise;
+}
 
         taiYouTubeAPI().then(() => {
             const player = new YT.Player("videoBai1Player", {
