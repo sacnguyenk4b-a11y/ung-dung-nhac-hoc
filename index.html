@@ -198,7 +198,8 @@ label input[type="checkbox"] {
 </div>
 
 <div class="card">
-    <div class="card">
+   <div class="card" id="khungBaiTinHoc" style="display:none">
+    <h2>📘 Tin học lớp 3 – Kết nối tri thức</h2>
     <h2>📘 Tin học lớp 3 – Kết nối tri thức</h2>
 
     <select id="chonBaiTinHoc" onchange="moBaiTinHoc()">
@@ -1338,6 +1339,11 @@ function vaoHoc() {
         "Xin chào " + hocSinh.hoTen +
         " – Lớp " + hocSinh.lop +
         ". Bạn đã chọn thông tin thành công!";
+    document.getElementById("khungBaiTinHoc").style.display = "block";
+    document.getElementById("khungBaiTinHoc").scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+});
 }
 
 
