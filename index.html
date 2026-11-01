@@ -822,28 +822,40 @@ function moBaiTinHoc() {
         }
 
         // Tải YouTube IFrame API
-        function taiYouTubeAPI() {
+       function taiYouTubeAPI() {
     if (window.YT && window.YT.Player) {
         return Promise.resolve();
     }
 
-    if (!window.__ytApiPromise) {
-        window.__ytApiPromise = new Promise(resolve => {
-            window.onYouTubeIframeAPIReady = function() {
-                resolve();
-            };
-
-            if (!document.querySelector('script[src="https://www.youtube.com/iframe_api"]')) {
-                const script = document.createElement("script");
-                script.src = "https://www.youtube.com/iframe_api";
-                document.head.appendChild(script);
-            }
-        });
+    if (window.__ytApiPromise) {
+        return window.__ytApiPromise;
     }
+
+    window.__ytApiPromise = new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+
+        script.src = "https://www.youtube.com/iframe_api";
+
+        window.onYouTubeIframeAPIReady = function() {
+            console.log("YouTube API đã tải thành công");
+            resolve();
+        };
+
+        script.onerror = function() {
+            reject(new Error("Không tải được YouTube IFrame API"));
+        };
+
+        document.head.appendChild(script);
+
+        setTimeout(() => {
+            if (!(window.YT && window.YT.Player)) {
+                reject(new Error("YouTube API tải quá thời gian"));
+            }
+        }, 15000);
+    });
 
     return window.__ytApiPromise;
 }
-
        taiYouTubeAPI()
     .then(() => {
         console.log("YouTube API đã sẵn sàng");
