@@ -1229,7 +1229,120 @@ function ganSuKienBaiMoi(noiDung, maBai, tracNghiem, dienTu, tongDiem) {
     });
 }
 
+// ======================================
+// 3. KẾT NỐI DANH SÁCH HỌC SINH TỪ SHEETS
+// ======================================
 
+const URL_LMS = "https://script.google.com/macros/s/AKfycbwnscMWey-8h-0TenF25y2RX5ru73BYVkh1dKuTF27g8usSQV_sHjL_7tWFx0-bPKzV/exec";
+
+let danhSachHocSinh = [];
+
+function taiDanhSachHocSinh() {
+    const trangThai = document.getElementById("trangThaiHocSinh");
+    const script = document.createElement("script");
+    const callbackName = "nhanDanhSachHocSinh";
+
+    trangThai.textContent = "Đang tải danh sách học sinh...";
+
+    window[callbackName] = function(data) {
+        script.remove();
+        delete window[callbackName];
+
+        if (!data || !data.success) {
+            trangThai.textContent = "Không tải được danh sách học sinh.";
+            return;
+        }
+
+        danhSachHocSinh = data.hocSinh || [];
+
+        const chonLop = document.getElementById("chonLop");
+        const cacLop = [...new Set(
+            danhSachHocSinh.map(hs => hs.lop)
+        )].sort();
+
+        chonLop.innerHTML = '<option value="">-- Chọn lớp --</option>';
+
+        cacLop.forEach(lop => {
+            const option = document.createElement("option");
+            option.value = lop;
+            option.textContent = lop;
+            chonLop.appendChild(option);
+        });
+
+        trangThai.textContent =
+            "Đã tải " + danhSachHocSinh.length +
+            " học sinh. Bạn hãy chọn lớp và họ tên.";
+    };
+
+    script.onerror = function() {
+        script.remove();
+        delete window[callbackName];
+        trangThai.textContent =
+            "Lỗi kết nối. Bạn hãy tải lại trang.";
+    };
+
+    script.src = URL_LMS +
+        "?callback=" + callbackName +
+        "&t=" + Date.now();
+
+    document.body.appendChild(script);
+}
+
+
+// Khi chọn lớp, hiển thị học sinh thuộc lớp đó
+document.getElementById("chonLop").addEventListener("change", function() {
+    const lop = this.value;
+    const chonHocSinh = document.getElementById("chonHocSinh");
+
+    chonHocSinh.innerHTML =
+        '<option value="">-- Chọn học sinh --</option>';
+
+    chonHocSinh.disabled = !lop;
+
+    if (!lop) return;
+
+    const hocSinhTrongLop = danhSachHocSinh.filter(
+        hs => hs.lop === lop
+    );
+
+    hocSinhTrongLop.forEach(hs => {
+        const option = document.createElement("option");
+        option.value = hs.maHS;
+        option.textContent = hs.hoTen;
+        chonHocSinh.appendChild(option);
+    });
+});
+
+
+// Xác nhận học sinh vào học
+function vaoHoc() {
+    const maHS = document.getElementById("chonHocSinh").value;
+    const hocSinh = danhSachHocSinh.find(
+        hs => hs.maHS === maHS
+    );
+
+    const trangThai = document.getElementById("trangThaiHocSinh");
+
+    if (!hocSinh) {
+        trangThai.textContent =
+            "Bạn hãy chọn đầy đủ lớp và họ tên trước nhé!";
+        return;
+    }
+
+    localStorage.setItem(
+        "hocSinhDangHoc",
+        JSON.stringify(hocSinh)
+    );
+
+    trangThai.textContent =
+        "Xin chào " + hocSinh.hoTen +
+        " – Lớp " + hocSinh.lop +
+        ". Bạn đã chọn thông tin thành công!";
+}
+
+
+// Tải danh sách khi mở ứng dụng
+taiDanhSachHocSinh();
 khoiTaoDanhSachTinHoc();
 
 </script>
