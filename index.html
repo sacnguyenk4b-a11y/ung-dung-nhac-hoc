@@ -844,91 +844,105 @@ function moBaiTinHoc() {
     return window.__ytApiPromise;
 }
 
-        taiYouTubeAPI().then(() => {
-            const player = new YT.Player("videoBai1Player", {
-                videoId: "pzaXXKvJDQg",
-                playerVars: {
-                    playsinline: 1,
-                    rel: 0
-                },
-                events: {
-                    onReady: function() {
-                        const daDung = new Set();
+       taiYouTubeAPI()
+    .then(() => {
+        console.log("YouTube API đã sẵn sàng");
 
-                        window.__bai1VideoTimer = setInterval(() => {
-                            if (!player.getCurrentTime || player.getPlayerState() !== YT.PlayerState.PLAYING) return;
+        const player = new YT.Player("videoBai1Player", {
+            videoId: "pzaXXKvJDQg",
+            width: "100%",
+            height: "100%",
+            playerVars: {
+                playsinline: 1,
+                rel: 0
+            },
+            events: {
+                onReady: function() {
+                    console.log("Video Bài 1 đã sẵn sàng");
 
-                            const thoiGian = player.getCurrentTime();
+                    const daDung = new Set();
 
-                            danhSachDung.forEach((cau, index) => {
-                                if (thoiGian >= cau.giay && !daDung.has(index)) {
-                                    daDung.add(index);
-                                    player.pauseVideo();
+                    window.__bai1VideoTimer = setInterval(() => {
+                        if (player.getPlayerState() !== YT.PlayerState.PLAYING) return;
 
-                                    hopCauHoi.innerHTML = "";
-                                    hopCauHoi.style.display = "block";
+                        const thoiGian = player.getCurrentTime();
 
-                                    const p = document.createElement("p");
-                                    p.textContent = "❓ " + cau.hoi;
-                                    hopCauHoi.appendChild(p);
+                        danhSachDung.forEach((cau, index) => {
+                            if (thoiGian >= cau.giay && !daDung.has(index)) {
+                                daDung.add(index);
+                                player.pauseVideo();
 
-                                    cau.dapAn.forEach((dapAn, j) => {
-                                        const label = document.createElement("label");
-                                        label.style.cssText = "display:block;margin:10px 0";
+                                hopCauHoi.innerHTML = "";
+                                hopCauHoi.style.display = "block";
 
-                                        const radio = document.createElement("input");
-                                        radio.type = "radio";
-                                        radio.name = "videoBai1Cau" + index;
-                                        radio.value = j;
-                                        radio.style.width = "auto";
+                                const p = document.createElement("p");
+                                p.textContent = "❓ " + cau.hoi;
+                                hopCauHoi.appendChild(p);
 
-                                        label.append(radio, document.createTextNode(" " + dapAn));
-                                        hopCauHoi.appendChild(label);
-                                    });
+                                cau.dapAn.forEach((dapAn, j) => {
+                                    const label = document.createElement("label");
+                                    label.style.cssText = "display:block;margin:10px 0";
 
-                                    const nutTraLoi = document.createElement("button");
-                                    nutTraLoi.textContent = "Kiểm tra đáp án";
-                                    hopCauHoi.appendChild(nutTraLoi);
+                                    const radio = document.createElement("input");
+                                    radio.type = "radio";
+                                    radio.name = "videoBai1Cau" + index;
+                                    radio.value = j;
+                                    radio.style.width = "auto";
 
-                                    nutTraLoi.onclick = function() {
-                                        const chon = hopCauHoi.querySelector(
-                                            'input[name="videoBai1Cau' + index + '"]:checked'
-                                        );
+                                    label.append(radio, document.createTextNode(" " + dapAn));
+                                    hopCauHoi.appendChild(label);
+                                });
 
-                                        if (!chon) {
-                                            alert("Bạn hãy chọn một đáp án nhé!");
-                                            return;
-                                        }
+                                const nutTraLoi = document.createElement("button");
+                                nutTraLoi.textContent = "Kiểm tra đáp án";
+                                hopCauHoi.appendChild(nutTraLoi);
 
-                                        const dung = Number(chon.value) === cau.dung;
+                                nutTraLoi.onclick = function() {
+                                    const chon = hopCauHoi.querySelector(
+                                        'input[name="videoBai1Cau' + index + '"]:checked'
+                                    );
 
-                                        const ketQua = document.createElement("p");
-                                        ketQua.textContent = dung
-                                            ? "🎉 Chính xác! Bạn được 1 điểm."
-                                            : "Chưa chính xác. Đáp án đúng là " + cau.dapAn[cau.dung];
-                                        hopCauHoi.appendChild(ketQua);
+                                    if (!chon) {
+                                        alert("Bạn hãy chọn một đáp án nhé!");
+                                        return;
+                                    }
 
-                                        nutTraLoi.disabled = true;
+                                    const dung = Number(chon.value) === cau.dung;
 
-                                        const nutTiepTuc = document.createElement("button");
-                                        nutTiepTuc.textContent = "▶ Tiếp tục xem video";
-                                        hopCauHoi.appendChild(nutTiepTuc);
+                                    const ketQua = document.createElement("p");
+                                    ketQua.textContent = dung
+                                        ? "🎉 Chính xác! Bạn được 1 điểm."
+                                        : "Chưa chính xác. Đáp án đúng là " + cau.dapAn[cau.dung];
 
-                                        nutTiepTuc.onclick = function() {
-                                            hopCauHoi.style.display = "none";
-                                            player.playVideo();
-                                        };
+                                    hopCauHoi.appendChild(ketQua);
+                                    nutTraLoi.disabled = true;
+
+                                    const nutTiepTuc = document.createElement("button");
+                                    nutTiepTuc.textContent = "▶ Tiếp tục xem video";
+                                    hopCauHoi.appendChild(nutTiepTuc);
+
+                                    nutTiepTuc.onclick = function() {
+                                        hopCauHoi.style.display = "none";
+                                        player.playVideo();
                                     };
-                                }
-                            });
-                        }, 250);
-                    }
+                                };
+                            }
+                        });
+                    }, 250);
+                },
+                onError: function(event) {
+                    console.error("Lỗi YouTube Player:", event.data);
                 }
-            });
-
-            window.__bai1Player = player;
+            }
         });
-        // ===== KẾT THÚC VIDEO BÀI 1 =====
+
+        window.__bai1Player = player;
+    })
+    .catch(error => {
+        console.error("Không khởi tạo được video:", error);
+    });
+
+// ===== KẾT THÚC VIDEO BÀI 1 =====
 
         const tieuDeKT = document.createElement("h4");
         tieuDeKT.textContent = "📖 Kiến thức cần nhớ";
