@@ -1202,19 +1202,48 @@ function ganSuKienBaiMoi(noiDung, maBai, tracNghiem, dienTu, tongDiem) {
     const nutLamLai = noiDung.querySelector("#" + maBai + "reset");
     const ketQua = noiDung.querySelector("#" + maBai + "result");
     nutCham.addEventListener("click", () => {
-        let diem = 0, daTraLoi = 0;
+        let diem = 0, daTraLoi = 0, soCauDung = 0;
         tracNghiem.forEach(([name, dapAn]) => {
             const chon = noiDung.querySelector('input[name="' + name + '"]:checked');
-            if (chon) { daTraLoi++; if (chon.value === dapAn) diem++; }
+            if (chon) {
+    daTraLoi++;
+    if (chon.value === dapAn) {
+        diem++;
+        soCauDung++;
+    }
+}
         });
         let soDien = 0;
         dienTu.forEach(([id, dapAn]) => {
             const o = noiDung.querySelector("#" + id);
-            if (o && o.value !== "") { daTraLoi++; if (o.value.trim().toLocaleLowerCase("vi") === dapAn.toLocaleLowerCase("vi")) { diem++; soDien++; } }
+            if (o && o.value !== "") {
+    daTraLoi++;
+    if (o.value.trim().toLocaleLowerCase("vi") === dapAn.toLocaleLowerCase("vi")) {
+        diem++;
+        soDien++;
+        soCauDung++;
+    }
+}
         });
         if (daTraLoi < tracNghiem.length + dienTu.length) { alert("Bạn hãy hoàn thành các câu hỏi có chấm điểm trước nhé!"); return; }
         ketQua.style.display = "block";
         ketQua.textContent = "Kết quả: " + diem + "/" + tongDiem + " điểm. Phần trả lời ngắn chưa được chấm tự động; hãy xem đáp án gợi ý để tự đối chiếu.";
+        const hocSinh = JSON.parse(localStorage.getItem("hocSinhDangHoc") || "null");
+
+if (hocSinh) {
+    const viTriBai = Number(document.getElementById("chonBaiTinHoc").value);
+    const maBaiLMS = "TH3_B" + (viTriBai + 1);
+
+    guiKetQuaLMS({
+        maHS: hocSinh.maHS,
+        maBai: maBaiLMS,
+        diem: diem,
+        soCauDung: soCauDung,
+        tongSoCau: tongDiem,
+        tienDoVideo: 0,
+        trangThai: "Hoàn thành"
+    });
+}
         ketQua.scrollIntoView({behavior:"smooth", block:"center"});
     });
     nutLamLai.addEventListener("click", () => {
@@ -1235,7 +1264,16 @@ function ganSuKienBaiMoi(noiDung, maBai, tracNghiem, dienTu, tongDiem) {
 // ======================================
 
 const URL_LMS = "https://script.google.com/macros/s/AKfycbwnscMWey-8h-0TenF25y2RX5ru73BYVkh1dKuTF27g8usSQV_sHjL_7tWFx0-bPKzV/exec";
-
+function guiKetQuaLMS(duLieu) {
+    fetch(URL_LMS, {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+            "Content-Type": "text/plain;charset=utf-8"
+        },
+        body: JSON.stringify(duLieu)
+    });
+}
 let danhSachHocSinh = [];
 
 function taiDanhSachHocSinh() {
